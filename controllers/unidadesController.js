@@ -3,7 +3,8 @@ const UnidadesModel = require('../models/unidades');
 exports.getUnidad = async (req, res) => {
     try {
         const unidades = await UnidadesModel.findAll({
-            attributes: ['cvePresupuestal', 'unidad', 'tipo_unidad', 'delegacion', 'direccion', 'municipio', 'ini_servicio']
+            attributes: ['cvePresupuestal', 'unidad', 'tipo_unidad', 'delegacion', 'direccion',
+                'municipio', 'ini_servicio']
         });
         res.json(unidades);
     } catch (error) {
@@ -71,6 +72,40 @@ exports.createUnidades = async (req, res) => {
     }
 };
 
+exports.disguiseUnidad = async (req, res) => {
+    console.log('deleteUnidad llamado'); // Log para depuración
+    const { id } = req.params; // Obtén el parámetro id de los parámetros de la URL
+
+    if (!id) {
+        return res.status(400).json({
+            message: 'El identificador de la unidad es requerido'
+        });
+    }
+
+    try {
+        const unidad = await UnidadesModel.findOne({ where: { cvePresupuestal: id, is_deleted: false } });
+
+        if (!unidad) {
+            return res.status(404).json({
+                message: 'Unidad no encontrada o ya eliminada'
+            });
+        }
+
+        // Marca la unidad como eliminada
+        await UnidadesModel.update({ is_deleted: true }, { where: { cvePresupuestal: id } });
+
+        res.status(200).json({
+            message: 'Unidad eliminada correctamente'
+        });
+    } catch (error) {
+        console.error('Error al eliminar la unidad:', error);
+        res.status(500).json({
+            message: 'Error al eliminar la unidad',
+            error
+        });
+    }
+};
+
 exports.deleteUnidad = async (req, res) => {
     console.log('deleteUnidad llamado'); // Log para depuración
     const { id } = req.params; // Obtén el parámetro id de los parámetros de la URL
@@ -82,6 +117,7 @@ exports.deleteUnidad = async (req, res) => {
     }
 
     try {
+        // Busca la unidad por su clave primaria
         const unidad = await UnidadesModel.findOne({ where: { cvePresupuestal: id } });
 
         if (!unidad) {
@@ -90,6 +126,7 @@ exports.deleteUnidad = async (req, res) => {
             });
         }
 
+        // Elimina la unidad de la base de datos
         await UnidadesModel.destroy({ where: { cvePresupuestal: id } });
 
         res.status(200).json({
@@ -99,6 +136,45 @@ exports.deleteUnidad = async (req, res) => {
         console.error('Error al eliminar la unidad:', error);
         res.status(500).json({
             message: 'Error al eliminar la unidad',
+            error
+        });
+    }
+};
+
+
+exports.updateUnidad = async (req, res) => {
+    const { id } = req.params;
+    const { unidad, tipo_unidad, delegacion, direccion, municipio, ini_servicio } = req.body;
+
+    if (!id) {
+        return res.status(400).json({
+            message: 'El identificador de la unidad es requerido'
+        });
+    }
+
+    try {
+        const unidadExistente = await UnidadesModel.findByPk(id);
+
+        if (!unidadExistente) {
+            return res.status(404).json({
+                message: 'Unidad no encontrada'
+            });
+        }
+
+        const updatedUnidad = await unidadExistente.update({
+            unidad,
+            tipo_unidad,
+            delegacion,
+            direccion,
+            municipio,
+            ini_servicio
+        });
+
+        res.json(updatedUnidad);
+    } catch (error) {
+        console.error('Error al actualizar la unidad:', error);
+        res.status(500).json({
+            message: 'Error al actualizar la unidad',
             error
         });
     }

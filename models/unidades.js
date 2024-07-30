@@ -3,7 +3,7 @@ const sequelize = require('../configs/database');
 
 const Unidades = sequelize.define('Unidades', {
     cvePresupuestal: {
-        type: DataTypes.INTEGER(12),
+        type: DataTypes.INTEGER(50),
         allowNull: false,
         primaryKey: true
     },
@@ -30,6 +30,11 @@ const Unidades = sequelize.define('Unidades', {
     ini_servicio: {
         type: DataTypes.DATE,
         allowNull: true
+    },
+    is_deleted: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
     }
 }, {
     tableName: 'unidades',

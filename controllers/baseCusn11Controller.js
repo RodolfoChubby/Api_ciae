@@ -99,3 +99,41 @@ exports.deleteBaseCusn11 = async (req, res) => {
         });
     }
 };
+
+exports.updateBaseCusn11 = async (req, res) => {
+    const { id } = req.params;
+    const { cvePresupuestal, date, num, den } = req.body;
+
+    if (!id) {
+        return res.status(400).json({
+            message: 'El identificador de la base es requerido'
+        });
+    }
+
+    try {
+        // Buscar la base por el identificador
+        const baseCusn11 = await BaseCusn11.findByPk(id);
+
+        if (!baseCusn11) {
+            return res.status(404).json({
+                message: 'base no encontrada'
+            });
+        }
+
+        // Actualizar los campos
+        const updatedBaseCusn11 = await baseCusn11.update({
+            cvePresupuestal,
+            date,
+            num,
+            den
+        });
+
+        res.json(updatedBaseCusn11);
+    } catch (error) {
+        console.error('Error al actualizar la base:', error);
+        res.status(500).json({
+            message: 'Error al actualizar la base',
+            error
+        });
+    }
+};

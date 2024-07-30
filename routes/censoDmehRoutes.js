@@ -14,4 +14,7 @@ router.post('/', CensoDmehController.createCensoDmeh);
 // Ruta para eliminar un censo
 router.delete('/:id', CensoDmehController.deleteCensoDmeh);
 
+// Ruta para actualizar un censo
+router.put('/:id', CensoDmehController.updateCensoDmeh);
+
 module.exports = router;

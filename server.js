@@ -5,6 +5,7 @@ const UsuarioRoutes = require('./routes/UsuarioRoutes');
 const baseCusn11Routes = require('./routes/baseCusn11Routes');
 const censoDmehRoutes = require('./routes/censoDmehRoutes');
 const unidadesRoutes = require('./routes/unidadesRoutes');
+const baseefeRoutes = require('./routes/baseefeRoutes')
 
 const app = express();
 const port = 3000;
@@ -15,7 +16,8 @@ app.use(bodyParser.json());
 app.use('/api/usuario', UsuarioRoutes);
 app.use('/api/base-cusn11', baseCusn11Routes); 
 app.use('/api/censo-dmeh', censoDmehRoutes);
-app.use('/api/unidades',unidadesRoutes)
+app.use('/api/unidades', unidadesRoutes)
+app.use('/api/base-efe', baseefeRoutes)
 
 app.get('/', (req, res) => {
     res.send('Hello World!');

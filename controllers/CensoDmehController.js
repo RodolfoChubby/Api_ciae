@@ -87,3 +87,42 @@ exports.deleteCensoDmeh = async (req, res) => {
         });
     }
 };
+
+exports.updateCensoDmeh = async (req, res) => {
+    const { id } = req.params;
+    const {
+        cvePresupuestal, diag, date, pac_ccons_dmeh_sant_cen_prev,
+        pac_scons_dmeh_cant_cen_prev, pac_ccons_dmeh_cant_cen_prev,
+        pac_cdmeh_iden_egr_cant_neg_cons_pnvl, pac_cdmeh_iden_urg_cant_neg_cons_pnvl
+    } = req.body;
+
+    if (!id) {
+        return res.status(400).json({
+            message: 'El identificador del Censo es requerido'
+        });
+    }
+
+    try {
+        const censoDmeh = await CensoDmeh.findByPk(id);
+
+        if (!censoDmeh) {
+            return res.status(404).json({
+                message: 'Censo no encontrado'
+            });
+        }
+
+        const updatedCensoDmeh = await censoDmeh.update({
+            cvePresupuestal, diag, date, pac_ccons_dmeh_sant_cen_prev,
+            pac_scons_dmeh_cant_cen_prev, pac_ccons_dmeh_cant_cen_prev,
+            pac_cdmeh_iden_egr_cant_neg_cons_pnvl, pac_cdmeh_iden_urg_cant_neg_cons_pnvl
+        });
+
+        res.json(updatedCensoDmeh);
+    } catch (error) {
+        console.error('Error al actualizar el Censo:', error);
+        res.status(500).json({
+            message: 'Error al actualizar el Censo',
+            error
+        });
+    }
+};

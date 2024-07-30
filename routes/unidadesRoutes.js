@@ -11,7 +11,13 @@ router.get('/:id', unidadesController.getUnidadById);
 // Ruta para crear una nueva unidad
 router.post('/', unidadesController.createUnidades);
 
-// Ruta para eliminar una unidad
+// Ruta para marcar una unidad como eliminada (ocultar)
+router.patch('/:id/disguise', unidadesController.disguiseUnidad);
+
+// Ruta para eliminar físicamente una unidad
 router.delete('/:id', unidadesController.deleteUnidad);
+
+// Ruta para actualizar una unidad
+router.put('/:id', unidadesController.updateUnidad);
 
 module.exports = router;

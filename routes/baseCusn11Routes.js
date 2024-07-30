@@ -13,6 +13,9 @@ router.get('/:id', baseCusn11Controller.getBaseCusn11ById)
 router.post('/', baseCusn11Controller.createBaseCusn11);
 
 // Ruta para eliminar una basecusn11
-router.delete('/:id', baseCusn11Controller.deleteBaseCusn11)
+router.delete('/:id', baseCusn11Controller.deleteBaseCusn11);
+
+//Ruta para modificar una basecusn11
+router.put('/:id', baseCusn11Controller.updateBaseCusn11);
 
 module.exports = router;
