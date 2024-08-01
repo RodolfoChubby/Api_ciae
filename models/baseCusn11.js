@@ -9,7 +9,7 @@ const BaseCusn11 = sequelize.define('BaseCusn11', {
         primaryKey: true
     },
     cvePresupuestal: {
-        type: DataTypes.INTEGER(12),
+        type: DataTypes.INTEGER(15),
         allowNull: false,
         references: {
             model: 'unidades',

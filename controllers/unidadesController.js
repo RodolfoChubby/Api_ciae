@@ -39,39 +39,6 @@ exports.getUnidadById = async (req, res) => {
     }
 };
 
-
-exports.createUnidades = async (req, res) => {
-    const { cvePresupuestal, unidad, tipo_unidad, delegacion, direccion, municipio, ini_servicio
-     } = req.body;
-
-    // Verifica que se hayan proporcionado todos los campos necesarios
-    if (!cvePresupuestal || !unidad || !tipo_unidad || !delegacion || !municipio) {
-        return res.status(400).json({
-            message: 'Faltan campos requeridos'
-        });
-    }
-
-    try {
-        // Crea un nuevo ítem en la base de datos
-        const newUnidades = await UnidadesModel.create({
-            cvePresupuestal,
-            unidad,
-            tipo_unidad,
-            delegacion,
-            direccion,
-            municipio,
-            ini_servicio
-        });
-        res.status(201).json(newUnidades);
-    } catch (error) {
-        console.error('Error al crear el ítem:', error);
-        res.status(500).json({
-            message: 'Error al crear el ítem',
-            error
-        });
-    }
-};
-
 exports.disguiseUnidad = async (req, res) => {
     console.log('deleteUnidad llamado'); // Log para depuración
     const { id } = req.params; // Obtén el parámetro id de los parámetros de la URL
@@ -141,7 +108,56 @@ exports.deleteUnidad = async (req, res) => {
     }
 };
 
+// Crear un nuevo registro
+exports.createUnidades = async (req, res) => {
+    const { cvePresupuestal, unidad, tipo_unidad, delegacion, direccion, municipio, ini_servicio } = req.body;
 
+    // Verifica que se hayan proporcionado todos los campos necesarios
+    if (!cvePresupuestal || !unidad || !tipo_unidad || !delegacion || !municipio) {
+        return res.status(400).json({
+            message: 'Faltan campos requeridos'
+        });
+    }
+
+    // Función para parsear la fecha
+    const parseDate = (date) => {
+        let parsedDate;
+        if (date) {
+            if (date.length === 6) {
+                // Formato YYYYMM
+                const year = parseInt(date.substring(0, 4), 10);
+                const month = parseInt(date.substring(4, 6), 10);
+                parsedDate = new Date(year, month - 1, 1);
+            } else {
+                // Supongamos que el formato completo es YYYY-MM-DD
+                parsedDate = new Date(date);
+            }
+        }
+        return parsedDate;
+    };
+
+    try {
+        // Crea un nuevo ítem en la base de datos
+        const newUnidades = await UnidadesModel.create({
+            cvePresupuestal,
+            unidad,
+            tipo_unidad,
+            delegacion,
+            direccion,
+            municipio,
+            ini_servicio: parseDate(ini_servicio) // Convertir la fecha
+        });
+        res.status(201).json(newUnidades);
+    } catch (error) {
+        console.error('Error al crear el ítem:', error);
+        res.status(500).json({
+            message: 'Error al crear el ítem',
+            error
+        });
+    }
+};
+
+// Actualizar un registro
 exports.updateUnidad = async (req, res) => {
     const { id } = req.params;
     const { unidad, tipo_unidad, delegacion, direccion, municipio, ini_servicio } = req.body;
@@ -151,6 +167,23 @@ exports.updateUnidad = async (req, res) => {
             message: 'El identificador de la unidad es requerido'
         });
     }
+
+    // Función para parsear la fecha
+    const parseDate = (date) => {
+        let parsedDate;
+        if (date) {
+            if (date.length === 6) {
+                // Formato YYYYMM
+                const year = parseInt(date.substring(0, 4), 10);
+                const month = parseInt(date.substring(4, 6), 10);
+                parsedDate = new Date(year, month - 1, 1);
+            } else {
+                // Supongamos que el formato completo es YYYY-MM-DD
+                parsedDate = new Date(date);
+            }
+        }
+        return parsedDate;
+    };
 
     try {
         const unidadExistente = await UnidadesModel.findByPk(id);
@@ -167,7 +200,7 @@ exports.updateUnidad = async (req, res) => {
             delegacion,
             direccion,
             municipio,
-            ini_servicio
+            ini_servicio: parseDate(ini_servicio) // Convertir la fecha
         });
 
         res.json(updatedUnidad);

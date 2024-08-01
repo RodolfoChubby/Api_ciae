@@ -113,3 +113,43 @@ exports.deleteUsuario = async (req, res) => {
         });
     }
 };
+
+exports.updateUsuario = async (req, res) => {
+    const { id } = req.params;
+    const { cvePresupuestal, nombres, apeido_pat, apeido_mat, telefono, email, password, rol } = req.body;
+
+    if (!id) {
+        return res.status(400).json({
+            message: 'La matricula del usuario es requerida'
+        });
+    }
+
+    try {
+        const usuarioExistente = await Usuario.findByPk(id);
+
+        if (!Usuario) {
+            return res.status(404).json({
+                message: 'Usuario no encontrado'
+            });
+        }
+
+        const updatedUsuario = await usuarioExistente.update({
+            cvePresupuestal,
+            nombres,
+            apeido_pat,
+            apeido_mat,
+            telefono,
+            email,
+            password,
+            rol
+        });
+
+        res.json(updatedUsuario);
+    } catch (error) {
+        console.error('Error al actualizar el usuario:', error);
+        res.status(500).json({
+            message: 'Error al actualizar el usuario',
+            error
+        });
+    }
+};

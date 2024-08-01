@@ -6,6 +6,11 @@ const baseCusn11Routes = require('./routes/baseCusn11Routes');
 const censoDmehRoutes = require('./routes/censoDmehRoutes');
 const unidadesRoutes = require('./routes/unidadesRoutes');
 const baseefeRoutes = require('./routes/baseefeRoutes')
+const CensoDmehUnidadesRoutes = require('./routes/censoDemhUnidadesRoutes'); 
+const cip01Routes = require('./routes/cip01Routes');
+const consMfRoutes = require('./routes/consMfRoutes');
+const consultExtRoutes = require('./routes/consultExtRoutes');
+const cp03Routes = require('./routes/cp03Routes');
 
 const app = express();
 const port = 3000;
@@ -16,8 +21,13 @@ app.use(bodyParser.json());
 app.use('/api/usuario', UsuarioRoutes);
 app.use('/api/base-cusn11', baseCusn11Routes); 
 app.use('/api/censo-dmeh', censoDmehRoutes);
-app.use('/api/unidades', unidadesRoutes)
-app.use('/api/base-efe', baseefeRoutes)
+app.use('/api/unidades', unidadesRoutes);
+app.use('/api/base-efe', baseefeRoutes);
+app.use('/api/censo-dmeh-unidades', CensoDmehUnidadesRoutes);
+app.use('/api/cip01', cip01Routes);
+app.use('/api/cons-mf', consMfRoutes);
+app.use('/api/consult-ext', consultExtRoutes);
+app.use('/api/cp03', cp03Routes)
 
 app.get('/', (req, res) => {
     res.send('Hello World!');

@@ -14,7 +14,7 @@ exports.getCensoDmeh = async (req, res) => {
 };
 
 exports.getCensoDmehById = async (req, res) => {
-    const { id } = req.params; // Obtén el parámetro id de los parámetros de la URL
+    const { id } = req.params; 
 
     try {
         const censoDmeh = await CensoDmeh.findByPk(id);
@@ -35,29 +35,9 @@ exports.getCensoDmehById = async (req, res) => {
     }
 };
 
-exports.createCensoDmeh = async (req, res) => {
-    const {
-        cvePresupuestal, diag, date, pac_ccons_dmeh_sant_cen_prev,
-        pac_scons_dmeh_cant_cen_prev, pac_ccons_dmeh_cant_cen_prev,
-        pac_cdmeh_iden_egr_cant_neg_cons_pnvl, pac_cdmeh_iden_urg_cant_neg_cons_pnvl
-    } = req.body;
-
-    try {
-        const newCensoDmeh = await CensoDmeh.create({
-            cvePresupuestal, diag, date, pac_ccons_dmeh_sant_cen_prev,
-            pac_scons_dmeh_cant_cen_prev, pac_ccons_dmeh_cant_cen_prev,
-            pac_cdmeh_iden_egr_cant_neg_cons_pnvl, pac_cdmeh_iden_urg_cant_neg_cons_pnvl
-        });
-        res.status(201).json(newCensoDmeh);
-    } catch (error) {
-        console.error('Error al crear la entrada:', error);
-        res.status(500).json({ message: 'Error al crear la entrada', error });
-    }
-};
-
 exports.deleteCensoDmeh = async (req, res) => {
-    console.log('deleteCensoDmeh llamado'); // Log para depuración
-    const { id } = req.params; // Obtén el parámetro id de los parámetros de la URL
+    console.log('deleteCensoDmeh llamado'); 
+    const { id } = req.params; 
 
     if (!id) {
         return res.status(400).json({
@@ -88,6 +68,49 @@ exports.deleteCensoDmeh = async (req, res) => {
     }
 };
 
+// Crear un nuevo registro
+exports.createCensoDmeh = async (req, res) => {
+    const {
+        cvePresupuestal, diag, date, pac_ccons_dmeh_sant_cen_prev,
+        pac_scons_dmeh_cant_cen_prev, pac_ccons_dmeh_cant_cen_prev,
+        pac_cdmeh_iden_egr_cant_neg_cons_pnvl, pac_cdmeh_iden_urg_cant_neg_cons_pnvl
+    } = req.body;
+
+    const parseDate = (date) => {
+        let parsedDate;
+        if (date) {
+            if (date.length === 6) {
+                // Formato YYYYMM
+                const year = parseInt(date.substring(0, 4), 10);
+                const month = parseInt(date.substring(4, 6), 10);
+                parsedDate = new Date(year, month - 1, 1);
+            } else {
+                // Supongamos que el formato completo es YYYY-MM-DD
+                parsedDate = new Date(date);
+            }
+        }
+        return parsedDate;
+    };
+
+    try {
+        const newCensoDmeh = await CensoDmeh.create({
+            cvePresupuestal,
+            diag,
+            date: parseDate(date),
+            pac_ccons_dmeh_sant_cen_prev,
+            pac_scons_dmeh_cant_cen_prev,
+            pac_ccons_dmeh_cant_cen_prev,
+            pac_cdmeh_iden_egr_cant_neg_cons_pnvl,
+            pac_cdmeh_iden_urg_cant_neg_cons_pnvl
+        });
+        res.status(201).json(newCensoDmeh);
+    } catch (error) {
+        console.error('Error al crear la entrada:', error);
+        res.status(500).json({ message: 'Error al crear la entrada', error });
+    }
+};
+
+// Actualizar un registro
 exports.updateCensoDmeh = async (req, res) => {
     const { id } = req.params;
     const {
@@ -95,6 +118,22 @@ exports.updateCensoDmeh = async (req, res) => {
         pac_scons_dmeh_cant_cen_prev, pac_ccons_dmeh_cant_cen_prev,
         pac_cdmeh_iden_egr_cant_neg_cons_pnvl, pac_cdmeh_iden_urg_cant_neg_cons_pnvl
     } = req.body;
+
+    const parseDate = (date) => {
+        let parsedDate;
+        if (date) {
+            if (date.length === 6) {
+                // Formato YYYYMM
+                const year = parseInt(date.substring(0, 4), 10);
+                const month = parseInt(date.substring(4, 6), 10);
+                parsedDate = new Date(year, month - 1, 1);
+            } else {
+                // Supongamos que el formato completo es YYYY-MM-DD
+                parsedDate = new Date(date);
+            }
+        }
+        return parsedDate;
+    };
 
     if (!id) {
         return res.status(400).json({
@@ -112,9 +151,14 @@ exports.updateCensoDmeh = async (req, res) => {
         }
 
         const updatedCensoDmeh = await censoDmeh.update({
-            cvePresupuestal, diag, date, pac_ccons_dmeh_sant_cen_prev,
-            pac_scons_dmeh_cant_cen_prev, pac_ccons_dmeh_cant_cen_prev,
-            pac_cdmeh_iden_egr_cant_neg_cons_pnvl, pac_cdmeh_iden_urg_cant_neg_cons_pnvl
+            cvePresupuestal,
+            diag,
+            date: parseDate(date),
+            pac_ccons_dmeh_sant_cen_prev,
+            pac_scons_dmeh_cant_cen_prev,
+            pac_ccons_dmeh_cant_cen_prev,
+            pac_cdmeh_iden_egr_cant_neg_cons_pnvl,
+            pac_cdmeh_iden_urg_cant_neg_cons_pnvl
         });
 
         res.json(updatedCensoDmeh);

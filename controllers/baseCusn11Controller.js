@@ -15,56 +15,6 @@ exports.getBaseCusn11Data = async (req, res) => {
     }
 };
 
-exports.getBaseCusn11ById = async (req, res) => {
-    const { id } = req.params; // Obtén el parámetro id de los parámetros de la URL
-
-    try {
-        // Busca una basecusn11 por su clave primaria
-        const baseCusn11 = await BaseCusn11.findByPk(id);
-
-        if (!baseCusn11) {
-            return res.status(404).json({
-                message: 'base no encontrada'
-            });
-        }
-
-        res.json(baseCusn11);
-    } catch (error) {
-        console.error('Error al obtener la base:', error);
-        res.status(500).json({
-            message: 'Error al obtener la base',
-            error
-        });
-    }
-};
-
-exports.createBaseCusn11 = async (req, res) => {
-    const { id_cusn11, cvePresupuestal, date, num, den } = req.body;
-
-    if (!cvePresupuestal || !date ) {
-        return res.status(400).json({
-            message: 'Faltan campos requeridos'
-        });
-    }
-
-    try {
-        const newBaseCusn11 = await BaseCusn11.create({
-            id_cusn11,
-            cvePresupuestal,
-            date,
-            num,
-            den
-        });
-        res.status(201).json(newBaseCusn11);
-    } catch (error) {
-        console.error('Error al crear el item:', error);
-        res.status(500).json({
-            message: 'Error al crear el ítem',
-            error
-        });
-    }
-};
-
 exports.deleteBaseCusn11 = async (req, res) => {
     console.log('deleteBaseCusn11 llamado'); 
     const { id } = req.params; 
@@ -100,6 +50,70 @@ exports.deleteBaseCusn11 = async (req, res) => {
     }
 };
 
+exports.getBaseCusn11ById = async (req, res) => {
+    const { id } = req.params; // Obtén el parámetro id de los parámetros de la URL
+
+    try {
+        // Busca una basecusn11 por su clave primaria
+        const baseCusn11 = await BaseCusn11.findByPk(id);
+
+        if (!baseCusn11) {
+            return res.status(404).json({
+                message: 'base no encontrada'
+            });
+        }
+
+        res.json(baseCusn11);
+    } catch (error) {
+        console.error('Error al obtener la base:', error);
+        res.status(500).json({
+            message: 'Error al obtener la base',
+            error
+        });
+    }
+};
+
+exports.createBaseCusn11 = async (req, res) => {
+    const { id_cusn11, cvePresupuestal, date, num, den } = req.body;
+
+    if (!cvePresupuestal || !date) {
+        return res.status(400).json({
+            message: 'Faltan campos requeridos'
+        });
+    }
+
+    let parsedDate;
+
+    if (date) {
+        if (date.length === 6) {
+            // Formato YYYYMM
+            const year = parseInt(date.substring(0, 4), 10);
+            const month = parseInt(date.substring(4, 6), 10);
+            parsedDate = new Date(year, month - 1, 1); // Primer día del mes
+        } else {
+            // Supongamos que el formato completo es YYYY-MM-DD
+            parsedDate = new Date(date);
+        }
+    }
+
+    try {
+        const newBaseCusn11 = await BaseCusn11.create({
+            id_cusn11,
+            cvePresupuestal,
+            date: parsedDate,
+            num,
+            den
+        });
+        res.status(201).json(newBaseCusn11);
+    } catch (error) {
+        console.error('Error al crear el item:', error);
+        res.status(500).json({
+            message: 'Error al crear el ítem',
+            error
+        });
+    }
+};
+
 exports.updateBaseCusn11 = async (req, res) => {
     const { id } = req.params;
     const { cvePresupuestal, date, num, den } = req.body;
@@ -110,20 +124,34 @@ exports.updateBaseCusn11 = async (req, res) => {
         });
     }
 
+    let parsedDate;
+
+    if (date) {
+        if (date.length === 6) {
+            // Formato YYYYMM
+            const year = parseInt(date.substring(0, 4), 10);
+            const month = parseInt(date.substring(4, 6), 10);
+            parsedDate = new Date(year, month - 1, 1); // Primer día del mes
+        } else {
+            // Supongamos que el formato completo es YYYY-MM-DD
+            parsedDate = new Date(date);
+        }
+    }
+
     try {
         // Buscar la base por el identificador
         const baseCusn11 = await BaseCusn11.findByPk(id);
 
         if (!baseCusn11) {
             return res.status(404).json({
-                message: 'base no encontrada'
+                message: 'Base no encontrada'
             });
         }
 
         // Actualizar los campos
         const updatedBaseCusn11 = await baseCusn11.update({
             cvePresupuestal,
-            date,
+            date: parsedDate,
             num,
             den
         });

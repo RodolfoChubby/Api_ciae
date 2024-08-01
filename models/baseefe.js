@@ -9,7 +9,7 @@ const BaseEfe = sequelize.define('BaseEfe', {
         primaryKey: true
     },
     cvePresupuestal: {
-        type: DataTypes.INTEGER(12),
+        type: DataTypes.INTEGER(15),
         allowNull: false,
         references: {
             model: 'unidades',
