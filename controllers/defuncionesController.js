@@ -117,15 +117,6 @@ exports.updateDefuncion = async (req, res) => {
     const updateData = req.body;
 
     try {
-        // Validar las fechas en el cuerpo de la solicitud
-        const validDateFields = ['fechanacimiento', 'fecha_cirugia', 'fechadefuncion', 'fechacertificacion', 'fecharegistro', 'fechainsercion', 'fecha_actualizacion', 'fecha_codificacion'];
-        
-        validDateFields.forEach(field => {
-            if (updateData[field] && !Date.parse(updateData[field])) {
-                return res.status(400).json({ error: `Invalid date format for ${field}` });
-            }
-        });
-
         const defunciones = await Defunciones.findByPk(id);
 
         if (!defunciones) {
