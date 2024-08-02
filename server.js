@@ -13,7 +13,9 @@ const consultExtRoutes = require('./routes/consultExtRoutes');
 const cp03Routes = require('./routes/cp03Routes');
 const cp04Routes = require('./routes/cp04Routes');
 const defuncionesRoutes = require('./routes/defuncionesRoutes');
-const defuncionesAux = require('./routes/defunicionesAuxRoutes');
+const defuncionesAuxRoutes = require('./routes/defunicionesAuxRoutes');
+const diagTratRoutes = require('./routes/diagTratRoutes');
+const diasHabRoutes = require('./routes/diasHabRoutes');
 
 const app = express();
 const port = 3000;
@@ -33,7 +35,9 @@ app.use('/api/consult-ext', consultExtRoutes);
 app.use('/api/cp03', cp03Routes);
 app.use('/api/cp04', cp04Routes);
 app.use('/api/defunciones', defuncionesRoutes);
-app.use('/api/defunciones-aux', defuncionesAux);
+app.use('/api/defunciones-aux', defuncionesAuxRoutes);
+app.use('/api/diag-trat', diagTratRoutes);
+app.use('/api/dias-hab', diasHabRoutes);
 
 app.get('/', (req, res) => {
     res.send('Hello World!');
