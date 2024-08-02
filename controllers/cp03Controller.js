@@ -52,6 +52,27 @@ exports.createCp03 = async (req, res) => {
         h3_geria_inds_sindrome_deterioro_cognitivo, h3_geria_inds_sindrome_incontigencia_urinaria
     } = req.body;
 
+    let parsedDate;
+    if (date) {
+        if (date.length === 6) {
+            // Formato YYYYMM
+            const year = parseInt(date.substring(0, 4), 10);
+            const month = parseInt(date.substring(4, 6), 10);
+            // Asegúrate de que el mes sea válido (1-12)
+            if (month < 1 || month > 12) {
+                return res.status(400).json({ message: 'Mes inválido en la fecha' });
+            }
+            parsedDate = new Date(year, month - 1, 1);
+        } else {
+            // Formato YYYY-MM-DD
+            parsedDate = new Date(date);
+            // Verificar si la fecha es válida
+            if (isNaN(parsedDate.getTime())) {
+                return res.status(400).json({ message: 'Fecha inválida' });
+            }
+        }
+    }
+
     // Verificar que se hayan proporcionado todos los campos necesarios
     if (!cvePresupuestal || !date || h1_cdpv_dm_muj20a44_pob === undefined || h1_cdpv_dm_muj20a44_no === undefined ||
         h1_cdpv_dm_muj20a44_cob === undefined || h1_cdpv_dm_muj20a44_ind === undefined || h1_cdpv_dm_hom20a44_pob === undefined ||
@@ -82,7 +103,7 @@ exports.createCp03 = async (req, res) => {
     try {
         const newCp03 = await Cp03.create({
             cvePresupuestal,
-            date,
+            date: parsedDate, // Usar la fecha analizada
             h1_cdpv_dm_muj20a44_pob,
             h1_cdpv_dm_muj20a44_no,
             h1_cdpv_dm_muj20a44_cob,
@@ -155,12 +176,14 @@ exports.createCp03 = async (req, res) => {
             h3_geria_inds_sindrome_deterioro_cognitivo,
             h3_geria_inds_sindrome_incontigencia_urinaria
         });
+
         res.status(201).json(newCp03);
     } catch (error) {
-        console.error('Error al crear el registro:', error);
-        res.status(500).json({ message: 'Error al crear el registro', error });
+        console.error('Error al crear el registro CP03:', error);
+        res.status(500).json({ message: 'Error al crear el registro CP03' });
     }
 };
+
 
 // Actualizar un registro existente
 exports.updateCp03 = async (req, res) => {

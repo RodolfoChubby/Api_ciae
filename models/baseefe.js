@@ -97,4 +97,13 @@ const BaseEfe = sequelize.define('BaseEfe', {
     timestamps: false
 });
 
+BaseEfe.beforeCreate(async (baseEfe, options) => {
+    if (baseEfe.cvePresupuestal) {
+        const unidad = await UnidadesModel.findByPk(baseEfe.cvePresupuestal);
+        if (!unidad) {
+            throw new Error('cvePresupuestal no existe en la tabla Unidades');
+        }
+    }
+});
+
 module.exports = BaseEfe;

@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../configs/database'); 
+const UnidadesModel = require('./unidades');
 
 const Consmf = sequelize.define('ConsMf', {
     id_consmf: {
@@ -10,6 +11,10 @@ const Consmf = sequelize.define('ConsMf', {
     cvePresupuestal: {
         type: DataTypes.STRING(15),
         allowNull: false,
+        references: {
+            model: 'unidades', 
+            key: 'cvePresupuestal'
+        }
     },
     date: {
         type: DataTypes.DATE,
@@ -25,6 +30,15 @@ const Consmf = sequelize.define('ConsMf', {
 }, {
     tableName: 'tbl_cons_mf',
     timestamps: false 
+});
+
+Consmf.beforeCreate(async (consmf, options) => {
+    if (consmf.cvePresupuestal) {
+        const unidad = await UnidadesModel.findByPk(consmf.cvePresupuestal);
+        if (!unidad) {
+            throw new Error('cvePresupuestal no existe en la tabla Unidades');
+        }
+    }
 });
 
 module.exports = Consmf;

@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../configs/database');
+const UnidadesModel = require('./unidades')
 
 const Cp03 = sequelize.define('Cp03', {
     id_cp03: {
@@ -306,6 +307,15 @@ const Cp03 = sequelize.define('Cp03', {
 }, {
     tableName: 'tbl_cp03',
     timestamps: false
+});
+
+Cp03.beforeCreate(async (cp03, options) => {
+    if (cp03.cvePresupuestal) {
+        const unidad = await UnidadesModel.findByPk(cp03.cvePresupuestal);
+        if (!unidad) {
+            throw new Error('cvePresupuestal no existe en la tabla Unidades');
+        }
+    }
 });
 
 module.exports = Cp03;

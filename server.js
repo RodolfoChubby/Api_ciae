@@ -11,6 +11,8 @@ const cip01Routes = require('./routes/cip01Routes');
 const consMfRoutes = require('./routes/consMfRoutes');
 const consultExtRoutes = require('./routes/consultExtRoutes');
 const cp03Routes = require('./routes/cp03Routes');
+const cp04Routes = require('./routes/cp04Routes');
+const defuncionesRoutes = require('./routes/defuncionesRoutes');
 
 const app = express();
 const port = 3000;
@@ -27,7 +29,9 @@ app.use('/api/censo-dmeh-unidades', CensoDmehUnidadesRoutes);
 app.use('/api/cip01', cip01Routes);
 app.use('/api/cons-mf', consMfRoutes);
 app.use('/api/consult-ext', consultExtRoutes);
-app.use('/api/cp03', cp03Routes)
+app.use('/api/cp03', cp03Routes);
+app.use('/api/cp04', cp04Routes);
+app.use('/api/defunciones', defuncionesRoutes);
 
 app.get('/', (req, res) => {
     res.send('Hello World!');

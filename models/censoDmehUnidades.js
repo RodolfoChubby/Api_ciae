@@ -1,6 +1,7 @@
 // models/tblCensoDmehUnidad.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../configs/database'); 
+const UnidadesModel = require('./unidades');
 
 const CensoDmehUnidades = sequelize.define('censoDmehUnidad', {
     id_censoDmehUnid: {
@@ -274,5 +275,15 @@ const CensoDmehUnidades = sequelize.define('censoDmehUnidad', {
     tableName: 'tbl_censo_dmeh_unidad',
     timestamps: false
 });
+
+CensoDmehUnidades.beforeCreate(async (censoDmehUnidades, options) => {
+    if (censoDmehUnidades.cvePresupuestal) {
+        const unidad = await UnidadesModel.findByPk(censoDmehUnidades.cvePresupuestal);
+        if (!unidad) {
+            throw new Error('cvePresupuestal no existe en la tabla Unidades');
+        }
+    }
+});
+
 
 module.exports = CensoDmehUnidades;

@@ -53,21 +53,30 @@ const CensoDmeh = sequelize.define('CensoDmeh', {
     timestamps: false
 });
 
+CensoDmeh.beforeCreate(async (censoDmeh, options) => {
+    if (censoDmeh.cvePresupuestal) {
+        const unidad = await UnidadesModel.findByPk(censoDmeh.cvePresupuestal);
+        if (!unidad) {
+            throw new Error('cvePresupuestal no existe en la tabla Unidades');
+        }
+    }
+});
+
 // Hook para calcular el total antes de crear o actualizar
 CensoDmeh.beforeCreate(async (censo, options) => {
     censo.totales = (censo.pac_ccons_dmeh_sant_cen_prev || 0) +
-                    (censo.pac_scons_dmeh_cant_cen_prev || 0) +
-                    (censo.pac_ccons_dmeh_cant_cen_prev || 0) +
-                    (censo.pac_cdmeh_iden_egr_cant_neg_cons_pnvl || 0) +
-                    (censo.pac_cdmeh_iden_urg_cant_neg_cons_pnvl || 0);
+        (censo.pac_scons_dmeh_cant_cen_prev || 0) +
+        (censo.pac_ccons_dmeh_cant_cen_prev || 0) +
+        (censo.pac_cdmeh_iden_egr_cant_neg_cons_pnvl || 0) +
+        (censo.pac_cdmeh_iden_urg_cant_neg_cons_pnvl || 0);
 });
 
 CensoDmeh.beforeUpdate(async (censo, options) => {
     censo.totales = (censo.pac_ccons_dmeh_sant_cen_prev || 0) +
-                    (censo.pac_scons_dmeh_cant_cen_prev || 0) +
-                    (censo.pac_ccons_dmeh_cant_cen_prev || 0) +
-                    (censo.pac_cdmeh_iden_egr_cant_neg_cons_pnvl || 0) +
-                    (censo.pac_cdmeh_iden_urg_cant_neg_cons_pnvl || 0);
+        (censo.pac_scons_dmeh_cant_cen_prev || 0) +
+        (censo.pac_ccons_dmeh_cant_cen_prev || 0) +
+        (censo.pac_cdmeh_iden_egr_cant_neg_cons_pnvl || 0) +
+        (censo.pac_cdmeh_iden_urg_cant_neg_cons_pnvl || 0);
 });
 
 module.exports = CensoDmeh;

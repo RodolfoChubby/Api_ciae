@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../configs/database'); 
+const UnidadesModel = require('./unidades');
 
 const ConsultExt = sequelize.define('ConsultExt', {
     id_consultext: {
@@ -38,6 +39,15 @@ const ConsultExt = sequelize.define('ConsultExt', {
 }, {
     tableName: 'tbl_consult_ext',
     timestamps: false
+});
+
+ConsultExt.beforeCreate(async (consultExt, options) => {
+    if (consultExt.cvePresupuestal) {
+        const unidad = await UnidadesModel.findByPk(consultExt.cvePresupuestal);
+        if (!unidad) {
+            throw new Error('cvePresupuestal no existe en la tabla Unidades');
+        }
+    }
 });
 
 module.exports = ConsultExt;
