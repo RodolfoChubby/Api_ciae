@@ -1,45 +1,41 @@
-const DiasHab = require('../models/diasHab');
+const Egresos = require('../models/egresos');
 
-// Controlador para obtener todos los registros
-exports.getAllDiasHab = async (req, res) => {
+// Obtener todos los registros
+exports.getAllEgresos = async (req, res) => {
     try {
-        const diasHabRecords = await DiasHab.findAll();
-        res.status(200).json(diasHabRecords);
+        const egresos = await Egresos.findAll();
+        res.status(200).json(egresos);
     } catch (error) {
         console.error('Error al obtener los registros:', error);
         res.status(500).json({ message: 'Error al obtener los registros', error });
     }
 };
 
-// Controlador para obtener un registro por su ID
-exports.getDiasHabById = async (req, res) => {
+// Obtener un registro por su ID
+exports.getEgresosById = async (req, res) => {
     const { id } = req.params;
-
     try {
-        const diasHabRecord = await DiasHab.findByPk(id);
-
-        if (!diasHabRecord) {
+        const egreso = await Egresos.findByPk(id);
+        if (!egreso) {
             return res.status(404).json({ message: 'Registro no encontrado' });
         }
-
-        res.status(200).json(diasHabRecord);
+        res.status(200).json(egreso);
     } catch (error) {
         console.error('Error al obtener el registro:', error);
         res.status(500).json({ message: 'Error al obtener el registro', error });
     }
 };
 
-// Controlador para crear un nuevo registro
-exports.createDiasHab = async (req, res) => {
-    const { date, dias_hab_acum, dias_cal_acum, dias_hab, dias_cal, dias_fin } = req.body;
+// Crear un nuevo registro
+exports.createEgresos = async (req, res) => {
+    const { cvePresupuestal, fecha, egresos, division } = req.body;
 
-    // Validación de fecha
     let parsedDate;
-    if (date) {
-        if (date.length === 6) {
+    if (fecha) {
+        if (fecha.length === 6) {
             // Formato YYYYMM
-            const year = parseInt(date.substring(0, 4), 10);
-            const month = parseInt(date.substring(4, 6), 10);
+            const year = parseInt(fecha.substring(0, 4), 10);
+            const month = parseInt(fecha.substring(4, 6), 10);
             // Asegúrate de que el mes sea válido (1-12)
             if (month < 1 || month > 12) {
                 return res.status(400).json({ message: 'Mes inválido en la fecha' });
@@ -47,7 +43,7 @@ exports.createDiasHab = async (req, res) => {
             parsedDate = new Date(year, month - 1, 1);
         } else {
             // Formato YYYY-MM-DD
-            parsedDate = new Date(date);
+            parsedDate = new Date(fecha);
             // Verificar si la fecha es válida
             if (isNaN(parsedDate.getTime())) {
                 return res.status(400).json({ message: 'Fecha inválida' });
@@ -57,40 +53,31 @@ exports.createDiasHab = async (req, res) => {
         return res.status(400).json({ message: 'Falta la fecha' });
     }
 
-    // Verificar que se hayan proporcionado todos los campos necesarios
-    if (!date) {
-        return res.status(400).json({ message: 'Falta la fecha' });
-    }
-
     try {
-        const newDiasHab = await DiasHab.create({
-            date: parsedDate,
-            dias_hab_acum,
-            dias_cal_acum,
-            dias_hab,
-            dias_cal,
-            dias_fin
+        const newEgreso = await Egresos.create({
+            cvePresupuestal,
+            fecha: parsedDate,
+            egresos,
+            division
         });
-
-        res.status(201).json(newDiasHab);
+        res.status(201).json(newEgreso);
     } catch (error) {
         console.error('Error al crear el registro:', error);
         res.status(500).json({ message: 'Error al crear el registro', error });
     }
 };
 
-// Controlador para actualizar un registro
-exports.updateDiasHab = async (req, res) => {
+// Actualizar un registro existente
+exports.updateEgresos = async (req, res) => {
     const { id } = req.params;
-    const { date, dias_hab_acum, dias_cal_acum, dias_hab, dias_cal, dias_fin } = req.body;
+    const { cvePresupuestal, fecha, egresos, division } = req.body;
 
-    // Validación de fecha
     let parsedDate;
-    if (date) {
-        if (date.length === 6) {
+    if (fecha) {
+        if (fecha.length === 6) {
             // Formato YYYYMM
-            const year = parseInt(date.substring(0, 4), 10);
-            const month = parseInt(date.substring(4, 6), 10);
+            const year = parseInt(fecha.substring(0, 4), 10);
+            const month = parseInt(fecha.substring(4, 6), 10);
             // Asegúrate de que el mes sea válido (1-12)
             if (month < 1 || month > 12) {
                 return res.status(400).json({ message: 'Mes inválido en la fecha' });
@@ -98,7 +85,7 @@ exports.updateDiasHab = async (req, res) => {
             parsedDate = new Date(year, month - 1, 1);
         } else {
             // Formato YYYY-MM-DD
-            parsedDate = new Date(date);
+            parsedDate = new Date(fecha);
             // Verificar si la fecha es válida
             if (isNaN(parsedDate.getTime())) {
                 return res.status(400).json({ message: 'Fecha inválida' });
@@ -108,47 +95,37 @@ exports.updateDiasHab = async (req, res) => {
         return res.status(400).json({ message: 'Falta la fecha' });
     }
 
-    // Verificar que se hayan proporcionado todos los campos necesarios
-    if (!date) {
-        return res.status(400).json({ message: 'Falta la fecha' });
-    }
-
     try {
-        const diasHabRecord = await DiasHab.findByPk(id);
-
-        if (!diasHabRecord) {
+        const egreso = await Egresos.findByPk(id);
+        if (!egreso) {
             return res.status(404).json({ message: 'Registro no encontrado' });
         }
 
-        const updatedDiasHab = await diasHabRecord.update({
-            date: parsedDate,
-            dias_hab_acum,
-            dias_cal_acum,
-            dias_hab,
-            dias_cal,
-            dias_fin
+        await egreso.update({
+            cvePresupuestal,
+            fecha: parsedDate,
+            egresos,
+            division
         });
 
-        res.status(200).json(updatedDiasHab);
+        res.status(200).json(egreso);
     } catch (error) {
         console.error('Error al actualizar el registro:', error);
         res.status(500).json({ message: 'Error al actualizar el registro', error });
     }
 };
 
-// Controlador para eliminar un registro
-exports.deleteDiasHab = async (req, res) => {
+// Eliminar un registro
+exports.deleteEgresos = async (req, res) => {
     const { id } = req.params;
-
     try {
-        const diasHabRecord = await DiasHab.findByPk(id);
-
-        if (!diasHabRecord) {
+        const egreso = await Egresos.findByPk(id);
+        if (!egreso) {
             return res.status(404).json({ message: 'Registro no encontrado' });
         }
 
-        await diasHabRecord.destroy();
-        res.status(200).json({ message: 'Registro eliminado con éxito' });
+        await egreso.destroy();
+        res.status(200).json({ message: 'Registro eliminado correctamente' });
     } catch (error) {
         console.error('Error al eliminar el registro:', error);
         res.status(500).json({ message: 'Error al eliminar el registro', error });
