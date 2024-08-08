@@ -27,6 +27,7 @@ const ExtractorCsui13Routes = require('./routes/extractorCsui13Routes');
 const ifuRoutes = require('./routes/ifuRoutes');
 const ifuStructureRoutes = require('./routes/ifuStructureRoutes');
 const imcobRoutes = require('./routes/imcobRoutes');
+const in08Routes = require('./routes/in08Routes')
 
 const app = express();
 const port = 3000;
@@ -60,6 +61,7 @@ app.use('/api/extractor-csui13', ExtractorCsui13Routes);
 app.use('/api/ifu', ifuRoutes);
 app.use('/api/ifu-structure', ifuStructureRoutes);
 app.use('/api/imcob', imcobRoutes);
+app.use('/api/in08', in08Routes);
 
 app.get('/', (req, res) => {
     res.send('Hello World!');
