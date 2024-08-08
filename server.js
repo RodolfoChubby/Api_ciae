@@ -24,6 +24,9 @@ const emcCobRoutes = require('./routes/emcCobRoutes')
 const extractorCegrnacRoutes = require('./routes/extractorCegrnacRoutes');
 const extractorCegrpacRoutes = require('./routes/extractorCegrpacRoutes');
 const ExtractorCsui13Routes = require('./routes/extractorCsui13Routes');
+const ifuRoutes = require('./routes/ifuRoutes');
+const ifuStructureRoutes = require('./routes/ifuStructureRoutes');
+const imcobRoutes = require('./routes/imcobRoutes');
 
 const app = express();
 const port = 3000;
@@ -54,6 +57,9 @@ app.use('/api/emc-cob', emcCobRoutes);
 app.use('/api/extractor-cegrnac', extractorCegrnacRoutes);
 app.use('/api/extractor-cegrpac', extractorCegrpacRoutes);
 app.use('/api/extractor-csui13', ExtractorCsui13Routes);
+app.use('/api/ifu', ifuRoutes);
+app.use('/api/ifu-structure', ifuStructureRoutes);
+app.use('/api/imcob', imcobRoutes);
 
 app.get('/', (req, res) => {
     res.send('Hello World!');
